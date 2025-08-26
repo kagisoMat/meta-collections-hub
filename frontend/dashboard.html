@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Meta Collections Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af, #515bd4);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .nav-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .nav-icon.instagram { background: linear-gradient(45deg, #f58529, #dd2a7b); }
+        .nav-icon.facebook { background: #1877F2; }
+        .nav-icon.whatsapp { background: #25D366; }
+        .nav-icon.pinterest { background: #E60023; }
+        .nav-icon.recreated { background: linear-gradient(45deg, #8134af, #515bd4); }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+
+        .collections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .collection-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border-left: 4px solid;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .collection-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .collection-card.instagram { border-left-color: #dd2a7b; }
+        .collection-card.facebook { border-left-color: #1877F2; }
+        .collection-card.whatsapp { border-left-color: #25D366; }
+        .collection-card.pinterest { border-left-color: #E60023; }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .platform-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .platform-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .platform-name {
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: white;
+            background: #6c757d;
+        }
+
+        .empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-subtext {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+
+        .action-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(45deg, #f58529, #dd2a7b);
+        }
+
+        .action-btn.secondary {
+            background: #6c757d;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+
+            .nav-icons {
+                gap: 1rem;
+            }
+
+            .nav-icon {
+                width: 35px;
+                height: 35px;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .collections-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .quick-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Meta Collections Hub</div>
+        <div class="nav-icons">
+            <a href="instagram.html" class="nav-icon instagram">IG</a>
+            <a href="facebook.html" class="nav-icon facebook">FB</a>
+            <a href="whatsapp.html" class="nav-icon whatsapp">WA</a>
+            <a href="pinterest.html" class="nav-icon pinterest">PIN</a>
+            <a href="recreated.html" class="nav-icon recreated">RE</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Dashboard</h1>
+            <p class="page-subtitle">Manage your collections across Instagram, Facebook, WhatsApp, and Pinterest</p>
+        </div>
+
+        <div class="collections-grid" id="collectionsGrid">
+            <div class="collection-card instagram" onclick="window.location.href='instagram.html'">
+                <div class="card-header">
+                    <div class="platform-info">
+                        <div class="platform-icon" style="background: linear-gradient(45deg, #f58529, #dd2a7b);">IG</div>
+                        <div class="platform-name">Instagram Posts</div>
+                    </div>
+                    <div class="status-badge">Not Connected</div>
+                </div>
+                <div class="empty-state">
+                    <div class="empty-icon">📸</div>
+                    <div class="empty-text">No Instagram collections yet</div>
+                    <div class="empty-subtext">Connect your account to start collecting</div>
+                </div>
+            </div>
+
+            <div class="collection-card facebook" onclick="window.location.href='facebook.html'">
+                <div class="card-header">
+                    <div class="platform-info">
+                        <div class="platform-icon" style="background: #1877F2;">FB</div>
+                        <div class="platform-name">Facebook Saves</div>
+                    </div>
+                    <div class="status-badge">Not Connected</div>
+                </div>
+                <div class="empty-state">
+                    <div class="empty-icon">👍</div>
+                    <div class="empty-text">No Facebook collections yet</div>
+                    <div class="empty-subtext">Connect your account to start collecting</div>
+                </div>
+            </div>
+
+            <div class="collection-card whatsapp" onclick="window.location.href='whatsapp.html'">
+                <div class="card-header">
+                    <div class="platform-info">
+                        <div class="platform-icon" style="background: #25D366;">WA</div>
+                        <div class="platform-name">WhatsApp Media</div>
+                    </div>
+                    <div class="status-badge">Not Connected</div>
+                </div>
+                <div class="empty-state">
+                    <div class="empty-icon">💬</div>
+                    <div class="empty-text">No WhatsApp collections yet</div>
+                    <div class="empty-subtext">Connect your account to start collecting</div>
+                </div>
+            </div>
+
+            <div class="collection-card pinterest" onclick="window.location.href='pinterest.html'">
+                <div class="card-header">
+                    <div class="platform-info">
+                        <div class="platform-icon" style="background: #E60023;">PIN</div>
+                        <div class="platform-name">Pinterest Boards</div>
+                    </div>
+                    <div class="status-badge">Not Connected</div>
+                </div>
+                <div class="empty-state">
+                    <div class="empty-icon">📌</div>
+                    <div class="empty-text">No Pinterest collections yet</div>
+                    <div class="empty-subtext">Connect your account to start collecting</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <a href="platforms.html" class="action-btn secondary">Connect Platform</a>
+            <a href="recreated.html" class="action-btn secondary">View Recreated</a>
+        </div>
+    </div>
+
+    <!-- Load scripts in correct order -->
+    <script src="js/api.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/utils.js"></script>
+    
+    <script>
+        // Add smooth hover effects to cards
+        document.querySelectorAll('.collection-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Add click animations to nav icons
+        document.querySelectorAll('.nav-icon').forEach(icon => {
+            icon.addEventListener('click', function() {
+                this.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1.1)';
+                }, 100);
+            });
+        });
+
+        // Check authentication
+        if (window.API && window.API.Auth && !window.API.Auth.isLoggedIn()) {
+            window.location.href = 'login.html';
+        }
+
+        // Load collections
+        async function loadCollections() {
+            try {
+                const collections = await window.API.Collections.getAll();
+                displayCollections(collections);
+            } catch (error) {
+                console.error('Failed to load collections:', error);
+                showError('Failed to load collections');
+            }
+        }
+
+        function getPlatformStyle(platform) {
+            const styles = {
+                instagram: 'background: linear-gradient(45deg, #f58529, #dd2a7b);',
+                facebook: 'background: #1877F2;',
+                whatsapp: 'background: #25D366;',
+                pinterest: 'background: #E60023;'
+            };
+            return styles[platform] || 'background: #6c757d;';
+        }
+
+        function getPlatformInitial(platform) {
+            const initials = {
+                instagram: 'IG',
+                facebook: 'FB',
+                whatsapp: 'WA',
+                pinterest: 'PIN'
+            };
+            return initials[platform] || 'CO';
+        }
+
+        function displayCollections(collections) {
+            const grid = document.getElementById('collectionsGrid');
+            
+            if (!collections || collections.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📁</div>
+                        <div class="empty-text">No collections yet</div>
+                        <div class="empty-subtext">Create your first collection to get started</div>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = collections.map(collection => `
+                <div class="collection-card ${collection.platform}" onclick="viewCollection('${collection._id}')">
+                    <div class="card-header">
+                        <div class="platform-info">
+                            <div class="platform-icon" style="${getPlatformStyle(collection.platform)}">
+                                ${getPlatformInitial(collection.platform)}
+                            </div>
+                            <div class="platform-name">${collection.title}</div>
+                        </div>
+                        <div class="status-badge ${collection.isCollaborative ? 'collaborative' : 'personal'}">
+                            ${collection.isCollaborative ? 'Shared' : 'Personal'}
+                        </div>
+                    </div>
+                    <div class="collection-stats">
+                        <div class="stat">${collection.items ? collection.items.length : 0} items</div>
+                        <div class="stat">${collection.collaborators ? collection.collaborators.length : 0} collaborators</div>
+                    </div>
+                    <div class="collection-description">
+                        ${collection.description || 'No description'}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function viewCollection(collectionId) {
+            window.location.href = `collection-view.html?collection=${collectionId}`;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCollections();
+            
+            // Display user info
+            const user = window.API.Auth.getUser();
+            if (user) {
+                document.querySelector('.page-subtitle').textContent = 
+                    `Welcome back, ${user.name}! Manage your collections across platforms`;
+            }
+        });
+    </script>
+</body>
+</html>

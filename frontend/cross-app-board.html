@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cross-App Board - Meta Collections Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af, #515bd4);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .nav-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .nav-icon.instagram { background: linear-gradient(45deg, #f58529, #dd2a7b); }
+        .nav-icon.facebook { background: #1877F2; }
+        .nav-icon.whatsapp { background: #25D366; }
+        .nav-icon.pinterest { background: #E60023; }
+        .nav-icon.recreated { background: linear-gradient(45deg, #8134af, #515bd4); }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .header-left h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-left p {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+
+        .platform-filters {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .platform-filter {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .platform-filter.active {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .platform-filter.instagram { background: linear-gradient(45deg, #f58529, #dd2a7b); }
+        .platform-filter.facebook { background: #1877F2; }
+        .platform-filter.whatsapp { background: #25D366; }
+        .platform-filter.pinterest { background: #E60023; }
+
+        .cross-app-grid {
+            columns: 4;
+            column-gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .board-item {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            break-inside: avoid;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            overflow: hidden;
+            border: 3px solid transparent;
+        }
+
+        .board-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+
+        .board-item.instagram { border-color: #dd2a7b; }
+        .board-item.facebook { border-color: #1877F2; }
+        .board-item.whatsapp { border-color: #25D366; }
+        .board-item.pinterest { border-color: #E60023; }
+
+        .item-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #6c757d;
+            position: relative;
+        }
+
+        .platform-badge {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.6rem;
+        }
+
+        .item-content {
+            padding: 1rem;
+        }
+
+        .item-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #212529;
+            font-size: 0.9rem;
+        }
+
+        .item-description {
+            color: #6c757d;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-bottom: 0.75rem;
+        }
+
+        .item-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #e9ecef;
+            background: white;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            border-color: #25D366;
+            background: #f8fff8;
+        }
+
+        .item-date {
+            font-size: 0.7rem;
+            color: #6c757d;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #6c757d;
+            grid-column: 1 / -1;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-subtext {
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+
+        .view-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .view-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #e9ecef;
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            text-decoration: none;
+            color: #212529;
+        }
+
+        .view-btn:hover {
+            border-color: #dd2a7b;
+            background: linear-gradient(45deg, #f58529, #dd2a7b);
+            color: white;
+        }
+
+        @media (max-width: 1024px) {
+            .cross-app-grid {
+                columns: 3;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+
+            .nav-icons {
+                gap: 1rem;
+            }
+
+            .nav-icon {
+                width: 35px;
+                height: 35px;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .header-left h1 {
+                font-size: 2rem;
+            }
+
+            .cross-app-grid {
+                columns: 2;
+            }
+
+            .platform-filters {
+                flex-wrap: wrap;
+            }
+
+            .view-controls {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cross-app-grid {
+                columns: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Meta Collections Hub</div>
+        <div class="nav-icons">
+            <a href="dashboard.html" class="nav-icon instagram">IG</a>
+            <a href="dashboard.html" class="nav-icon facebook">FB</a>
+            <a href="collaboration.html" class="nav-icon whatsapp">WA</a>
+            <a href="collection-view.html" class="nav-icon pinterest">PIN</a>
+            <a href="recreated.html" class="nav-icon recreated">RE</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <div class="header-left">
+                <h1>Cross-App Board</h1>
+                <p>All your collections in one unified view</p>
+            </div>
+            <div class="platform-filters">
+                <div class="platform-filter instagram active" onclick="filterPlatform('instagram')">IG</div>
+                <div class="platform-filter facebook active" onclick="filterPlatform('facebook')">FB</div>
+                <div class="platform-filter whatsapp active" onclick="filterPlatform('whatsapp')">WA</div>
+                <div class="platform-filter pinterest active" onclick="filterPlatform('pinterest')">PIN</div>
+            </div>
+        </div>
+
+        <div class="cross-app-grid" id="crossAppGrid">
+            <div class="empty-state">
+                <div class="empty-icon">🌐</div>
+                <div class="empty-text">No cross-platform items yet</div>
+                <div class="empty-subtext">Connect your social media accounts to see all your collections in one place</div>
+            </div>
+        </div>
+
+        <div class="view-controls">
+            <a href="collection-view.html" class="view-btn">Detailed View</a>
+            <a href="recreated.html" class="view-btn">Recreated Only</a>
+            <a href="collaboration.html" class="view-btn">Collaborative Items</a>
+        </div>
+    </div>
+
+    <script>
+        function filterPlatform(platform) {
+            const filter = event.target;
+            
+            // Toggle active state
+            filter.classList.toggle('active');
+            
+            // This will be connected to your backend filtering logic
+            console.log('Filtering platform:', platform, 'Active:', filter.classList.contains('active'));
+            
+            // Get all active platforms
+            const activePlatforms = Array.from(document.querySelectorAll('.platform-filter.active'))
+                .map(el => el.classList[1]); // Get the platform class name
+            
+            console.log('Active platforms:', activePlatforms);
+        }
+
+        function performAction(itemId, action) {
+            // This will be connected to your backend action system
+            console.log('Performing action:', action, 'on item:', itemId);
+        }
+
+        // Add click animations to nav icons
+        document.querySelectorAll('.nav-icon').forEach(icon => {
+            icon.addEventListener('click', function() {
+                this.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1.1)';
+                }, 100);
+            });
+        });
+
+        // Add hover effects to board items
+        document.querySelectorAll('.board-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
+
+<script src="js/api.js"></script>
+<script src="js/navigation.js"></script>
+<script src="js/utils.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect Platforms - Meta Collections Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af, #515bd4);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .nav-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .nav-icon.instagram { background: linear-gradient(45deg, #f58529, #dd2a7b); }
+        .nav-icon.facebook { background: #1877F2; }
+        .nav-icon.whatsapp { background: #25D366; }
+        .nav-icon.pinterest { background: #E60023; }
+        .nav-icon.recreated { background: linear-gradient(45deg, #8134af, #515bd4); }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .platform-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .platform-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .platform-card.instagram::before { background: linear-gradient(45deg, #f58529, #dd2a7b); }
+        .platform-card.facebook::before { background: #1877F2; }
+        .platform-card.whatsapp::before { background: #25D366; }
+        .platform-card.pinterest::before { background: #E60023; }
+
+        .platform-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .platform-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .platform-icon.instagram { background: linear-gradient(45deg, #f58529, #dd2a7b); }
+        .platform-icon.facebook { background: #1877F2; }
+        .platform-icon.whatsapp { background: #25D366; }
+        .platform-icon.pinterest { background: #E60023; }
+
+        .platform-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #212529;
+        }
+
+        .platform-description {
+            color: #6c757d;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .connect-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .connect-btn.connected {
+            background: #28a745;
+            color: white;
+        }
+
+        .connect-btn.disconnected {
+            background: linear-gradient(45deg, #f58529, #dd2a7b);
+            color: white;
+        }
+
+        .connect-btn:hover:not(.connected) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-dot.connected { background: #28a745; }
+        .status-dot.disconnected { background: #dc3545; }
+
+        .status-text.connected { color: #28a745; }
+        .status-text.disconnected { color: #dc3545; }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #212529;
+        }
+
+        .modal-platform {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-platform-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .modal-platform-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .modal-content {
+            margin-bottom: 2rem;
+        }
+
+        .modal-text {
+            color: #6c757d;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .permissions-list {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .permission-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .permission-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .permission-icon {
+            color: #28a745;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal-btn.cancel {
+            background: #f8f9fa;
+            color: #6c757d;
+        }
+
+        .modal-btn.connect {
+            background: linear-gradient(45deg, #f58529, #dd2a7b);
+            color: white;
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .connection-progress {
+            text-align: center;
+            display: none;
+        }
+
+        .progress-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #dd2a7b;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-checkmark {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 1rem;
+            position: relative;
+        }
+
+        .success-checkmark::before {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: #28a745;
+            border-radius: 50%;
+        }
+
+        .success-checkmark::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+
+            .nav-icons {
+                gap: 1rem;
+            }
+
+            .nav-icon {
+                width: 35px;
+                height: 35px;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .platforms-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Meta Collections Hub</div>
+        <div class="nav-icons">
+            <a href="dashboard.html" class="nav-icon instagram">IG</a>
+            <a href="dashboard.html" class="nav-icon facebook">FB</a>
+            <a href="collaboration.html" class="nav-icon whatsapp">WA</a>
+            <a href="collection-view.html" class="nav-icon pinterest">PIN</a>
+            <a href="recreated.html" class="nav-icon recreated">RE</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Connect Platforms</h1>
+            <p class="page-subtitle">Link your social media accounts to start collecting content</p>
+        </div>
+
+        <div class="platforms-grid">
+            <div class="platform-card instagram">
+                <div class="platform-icon instagram">IG</div>
+                <h3 class="platform-name">Instagram</h3>
+                <p class="platform-description">Connect your Instagram account to save posts, reels, and stories to your collections.</p>
+                <button class="connect-btn disconnected" data-platform="instagram" onclick="openConnectionModal('instagram')">
+                    Connect Instagram
+                </button>
+                <div class="connection-status">
+                    <div class="status-dot disconnected"></div>
+                    <span class="status-text disconnected">Not connected</span>
+                </div>
+            </div>
+
+            <div class="platform-card facebook">
+                <div class="platform-icon facebook">FB</div>
+                <h3 class="platform-name">Facebook</h3>
+                <p class="platform-description">Connect your Facebook account to save posts, videos, and marketplace items.</p>
+                <button class="connect-btn disconnected" data-platform="facebook" onclick="openConnectionModal('facebook')">
+                    Connect Facebook
+                </button>
+                <div class="connection-status">
+                    <div class="status-dot disconnected"></div>
+                    <span class="status-text disconnected">Not connected</span>
+                </div>
+            </div>
+
+            <div class="platform-card whatsapp">
+                <div class="platform-icon whatsapp">WA</div>
+                <h3 class="platform-name">WhatsApp</h3>
+                <p class="platform-description">Connect your WhatsApp to save media and messages from your chats.</p>
+                <button class="connect-btn disconnected" data-platform="whatsapp" onclick="openConnectionModal('whatsapp')">
+                    Connect WhatsApp
+                </button>
+                <div class="connection-status">
+                    <div class="status-dot disconnected"></div>
+                    <span class="status-text disconnected">Not connected</span>
+                </div>
+            </div>
+
+            <div class="platform-card pinterest">
+                <div class="platform-icon pinterest">PIN</div>
+                <h3 class="platform-name">Pinterest</h3>
+                <p class="platform-description">Connect your Pinterest account to save pins and boards to your collections.</p>
+                <button class="connect-btn disconnected" data-platform="pinterest" onclick="openConnectionModal('pinterest')">
+                    Connect Pinterest
+                </button>
+                <div class="connection-status">
+                    <div class="status-dot disconnected"></div>
+                    <span class="status-text disconnected">Not connected</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Connection Modal -->
+    <div class="modal-overlay" id="connectionModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Connect Account</h3>
+                <div class="modal-platform" id="modalPlatformInfo">
+                    <!-- Platform info will be inserted here -->
+                </div>
+            </div>
+            
+            <div class="modal-content" id="modalContent">
+                <p class="modal-text" id="modalText">
+                    <!-- Connection text will be inserted here -->
+                </p>
+                
+                <div class="permissions-list">
+                    <div class="permission-item">
+                        <span class="permission-icon">✓</span>
+                        <span>Read your saved items</span>
+                    </div>
+                    <div class="permission-item">
+                        <span class="permission-icon">✓</span>
+                        <span>Access your profile information</span>
+                    </div>
+                    <div class="permission-item">
+                        <span class="permission-icon">✓</span>
+                        <span>Save items to your collections</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="connection-progress" id="connectionProgress">
+                <div class="progress-spinner"></div>
+                <p>Connecting to <span id="progressPlatformName"></span>...</p>
+            </div>
+            
+            <div class="connection-success" id="connectionSuccess" style="display: none;">
+                <div class="success-checkmark"></div>
+                <p>Successfully connected to <span id="successPlatformName"></span>!</p>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+                <button class="modal-btn connect" id="connectActionBtn">Connect</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Platform connection status
+        const platformStatus = {
+            instagram: false,
+            facebook: false,
+            whatsapp: false,
+            pinterest: false
+        };
+
+        // Platform information
+        const platformInfo = {
+            instagram: {
+                name: "Instagram",
+                icon: "IG",
+                color: "linear-gradient(45deg, #f58529, #dd2a7b)",
+                description: "Connect your Instagram account to save posts, reels, and stories to your collections."
+            },
+            facebook: {
+                name: "Facebook",
+                icon: "FB",
+                color: "#1877F2",
+                description: "Connect your Facebook account to save posts, videos, and marketplace items."
+            },
+            whatsapp: {
+                name: "WhatsApp",
+                icon: "WA",
+                color: "#25D366",
+                description: "Connect your WhatsApp to save media and messages from your chats."
+            },
+            pinterest: {
+                name: "Pinterest",
+                icon: "PIN",
+                color: "#E60023",
+                description: "Connect your Pinterest account to save pins and boards to your collections."
+            }
+        };
+
+        // DOM elements
+        const connectionModal = document.getElementById('connectionModal');
+        const modalPlatformInfo = document.getElementById('modalPlatformInfo');
+        const modalText = document.getElementById('modalText');
+        const modalContent = document.getElementById('modalContent');
+        const connectionProgress = document.getElementById('connectionProgress');
+        const connectionSuccess = document.getElementById('connectionSuccess');
+        const progressPlatformName = document.getElementById('progressPlatformName');
+        const successPlatformName = document.getElementById('successPlatformName');
+        const connectActionBtn = document.getElementById('connectActionBtn');
+
+        let currentPlatform = null;
+
+        // Open connection modal
+        function openConnectionModal(platform) {
+            currentPlatform = platform;
+            const info = platformInfo[platform];
+            
+            // Update modal content
+            modalPlatformInfo.innerHTML = `
+                <div class="modal-platform-icon" style="background: ${info.color}">${info.icon}</div>
+                <span class="modal-platform-name">${info.name}</span>
+            `;
+            
+            modalText.textContent = `You are about to connect your ${info.name} account. This will allow Meta Collections Hub to:`;
+            
+            // Update progress and success messages
+            progressPlatformName.textContent = info.name;
+            successPlatformName.textContent = info.name;
+            
+            // Reset modal state
+            modalContent.style.display = 'block';
+            connectionProgress.style.display = 'none';
+            connectionSuccess.style.display = 'none';
+            connectActionBtn.textContent = 'Connect';
+            connectActionBtn.onclick = () => initiateConnection(platform);
+            
+            // Show modal
+            connectionModal.classList.add('active');
+        }
+
+        // Close modal
+        function closeModal() {
+            connectionModal.classList.remove('active');
+        }
+
+        // Initiate connection process
+        function initiateConnection(platform) {
+            // Show progress UI
+            modalContent.style.display = 'none';
+            connectionProgress.style.display = 'block';
+            connectActionBtn.style.display = 'none';
+            
+            // Simulate API connection process
+            setTimeout(() => {
+                // Simulate successful connection
+                completeConnection(platform, true);
+            }, 2000);
+        }
+
+        // Complete connection process
+        function completeConnection(platform, success) {
+            if (success) {
+                // Update connection status
+                platformStatus[platform] = true;
+                updatePlatformUI(platform, true);
+                
+                // Show success UI
+                connectionProgress.style.display = 'none';
+                connectionSuccess.style.display = 'block';
+                
+                // Update button to close modal
+                connectActionBtn.style.display = 'block';
+                connectActionBtn.textContent = 'Done';
+                connectActionBtn.onclick = closeModal;
+                
+                // In a real implementation, you would:
+                // 1. Store the connection status in local storage or your backend
+                // 2. Update the dashboard to reflect the connected platform
+            } else {
+                // Handle connection failure
+                alert(`Failed to connect to ${platformInfo[platform].name}. Please try again.`);
+                closeModal();
+            }
+        }
+
+        // Update platform UI based on connection status
+        function updatePlatformUI(platform, isConnected) {
+            const button = document.querySelector(`.connect-btn[data-platform="${platform}"]`);
+            const statusDot = button.parentElement.querySelector('.status-dot');
+            const statusText = button.parentElement.querySelector('.status-text');
+            
+            if (isConnected) {
+                button.textContent = `Connected to ${platformInfo[platform].name}`;
+                button.classList.remove('disconnected');
+                button.classList.add('connected');
+                statusDot.classList.remove('disconnected');
+                statusDot.classList.add('connected');
+                statusText.textContent = 'Connected';
+                statusText.classList.remove('disconnected');
+                statusText.classList.add('connected');
+            } else {
+                button.textContent = `Connect ${platformInfo[platform].name}`;
+                button.classList.remove('connected');
+                button.classList.add('disconnected');
+                statusDot.classList.remove('connected');
+                statusDot.classList.add('disconnected');
+                statusText.textContent = 'Not connected';
+                statusText.classList.remove('connected');
+                statusText.classList.add('disconnected');
+            }
+        }
+
+        // Close modal when clicking outside
+        connectionModal.addEventListener('click', (e) => {
+            if (e.target === connectionModal) {
+                closeModal();
+            }
+        });
+
+        // Initialize platform status from localStorage (in a real app)
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if user is logged in
+            if (typeof window.API !== 'undefined' && !window.API.Auth.isLoggedIn()) {
+                window.location.href = 'login.html';
+            }
+            
+            // In a real implementation, you would load connection status from your backend
+            // For now, we'll simulate checking connection status
+            setTimeout(() => {
+                // Simulate some platforms being already connected
+                const simulatedConnections = {
+                    instagram: Math.random() > 0.5,
+                    facebook: Math.random() > 0.7,
+                    whatsapp: Math.random() > 0.3,
+                    pinterest: Math.random() > 0.6
+                };
+                
+                // Update UI based on simulated connections
+                for (const platform in simulatedConnections) {
+                    if (simulatedConnections[platform]) {
+                        updatePlatformUI(platform, true);
+                        platformStatus[platform] = true;
+                    }
+                }
+            }, 500);
+        });
+    </script>
+
+<script src="js/api.js"></script>
+<script src="js/navigation.js"></script>
+<script src="js/utils.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pinterest Collections - Meta Collections Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f7f7f7;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af, #515bd4);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .platform-tabs {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .platform-tab {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .platform-tab.active {
+            background: white;
+            color: #E60023;
+            border-color: white;
+        }
+
+        .platform-tab:hover:not(.active) {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .recreated-tab {
+            background: linear-gradient(45deg, #8134af, #515bd4);
+            border-color: transparent;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .pinterest-logo {
+            width: 60px;
+            height: 60px;
+            background: #E60023;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .header-info h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #E60023;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-info p {
+            color: #767676;
+            font-size: 1rem;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .status-indicator.connected {
+            background: #ffe8e8;
+            color: #E60023;
+        }
+
+        .status-indicator.disconnected {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-dot.connected {
+            background: #E60023;
+        }
+
+        .status-dot.disconnected {
+            background: #ffc107;
+        }
+
+        .connect-btn {
+            padding: 0.75rem 1.5rem;
+            background: #E60023;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .connect-btn:hover {
+            background: #ad081b;
+        }
+
+        .filters-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+
+        .filter-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.75rem;
+            display: block;
+            font-size: 0.9rem;
+        }
+
+        .filter-options {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-option {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #767676;
+        }
+
+        .filter-option.active {
+            background: #E60023;
+            color: white;
+            border-color: #E60023;
+        }
+
+        .filter-option:hover:not(.active) {
+            border-color: #E60023;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-bar:focus {
+            border-color: #E60023;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .item-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .item-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .item-thumbnail {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #f7f7f7, #eeeeee);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #767676;
+            position: relative;
+        }
+
+        .platform-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: #E60023;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .type-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .item-content {
+            padding: 1.5rem;
+        }
+
+        .item-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
+        }
+
+        .item-notes {
+            color: #767676;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 1rem;
+        }
+
+        .item-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            background: #f7f7f7;
+            color: #767676;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .item-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            color: #767676;
+        }
+
+        .source-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .source-link {
+            color: #E60023;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .source-link:hover {
+            text-decoration: underline;
+        }
+
+        .collaborators {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .collaborator-avatar {
+            width: 24px;
+            height: 24px;
+            background: #E60023;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .collaboration-type {
+            background: #ffe8e8;
+            color: #E60023;
+            padding: 0.25rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .collaboration-type.shared {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #767676;
+            font-weight: 500;
+        }
+
+        .action-btn:hover {
+            background: #f7f7f7;
+        }
+
+        .action-btn.primary {
+            background: #E60023;
+            color: white;
+            border-color: #E60023;
+        }
+
+        .action-btn.primary:hover {
+            background: #ad081b;
+        }
+
+        .status-indicator-card {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: #f7f7f7;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .status-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+
+        .status-icon.saved { background: #767676; }
+        .status-icon.progress { background: #ffc107; }
+        .status-icon.done { background: #28a745; }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #767676;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .empty-subtext {
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 1024px) {
+            .platform-tabs {
+                gap: 0.5rem;
+            }
+
+            .platform-tab {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+
+            .items-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .platform-tabs {
+                overflow-x: auto;
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .connection-status {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .items-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Meta Collections Hub</div>
+        <div class="platform-tabs">
+            <a href="instagram.html" class="platform-tab">Instagram</a>
+            <a href="facebook.html" class="platform-tab">Facebook</a>
+            <a href="whatsapp.html" class="platform-tab">WhatsApp</a>
+            <a href="pinterest.html" class="platform-tab active">Pinterest</a>
+            <a href="recreated.html" class="platform-tab recreated-tab">Recreated</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <div class="header-left">
+                <div class="pinterest-logo">📌</div>
+                <div class="header-info">
+                    <h1>Pinterest Collections</h1>
+                    <p>Organize your Pinterest boards and pins</p>
+                </div>
+            </div>
+            <div class="connection-status">
+                <div class="status-indicator disconnected" id="connectionStatus">
+                    <div class="status-dot disconnected"></div>
+                    <span>Not Connected</span>
+                </div>
+                <button class="connect-btn" onclick="connectPinterest()">Connect Pinterest</button>
+            </div>
+        </div>
+
+        <div class="filters-section">
+            <div class="filter-group">
+                <label class="filter-label">Content Type</label>
+                <div class="filter-options">
+                    <div class="filter-option active" onclick="filterByType('all')">All</div>
+                    <div class="filter-option" onclick="filterByType('image')">Images</div>
+                    <div class="filter-option" onclick="filterByType('video')">Videos</div>
+                    <div class="filter-option" onclick="filterByType('pin')">Pins</div>
+                    <div class="filter-option" onclick="filterByType('idea')">Ideas</div>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label">Status</label>
+                <div class="filter-options">
+                    <div class="filter-option active" onclick="filterByStatus('all')">All</div>
+                    <div class="filter-option" onclick="filterByStatus('saved')">Saved</div>
+                    <div class="filter-option" onclick="filterByStatus('progress')">In Progress</div>
+                    <div class="filter-option" onclick="filterByStatus('done')">Done</div>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label">Collaboration</label>
+                <div class="filter-options">
+                    <div class="filter-option active" onclick="filterByCollaboration('all')">All</div>
+                    <div class="filter-option" onclick="filterByCollaboration('solo')">Solo</div>
+                    <div class="filter-option" onclick="filterByCollaboration('shared')">Shared</div>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label">Source Board</label>
+                <div class="filter-options">
+                    <div class="filter-option active" onclick="filterBySource('all')">All Boards</div>
+                    <div class="filter-option" onclick="filterBySource('home-decor')">Home Decor</div>
+                    <div class="filter-option" onclick="filterBySource('recipes')">Recipes</div>
+                    <div class="filter-option" onclick="filterBySource('diy')">DIY Projects</div>
+                    <div class="filter-option" onclick="filterBySource('fashion')">Fashion</div>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label">Search</label>
+                <input type="text" class="search-bar" placeholder="Search by title, tags, or notes..." onkeyup="searchItems(this.value)">
+            </div>
+        </div>
+
+        <div class="items-grid" id="itemsGrid">
+            <!-- Sample Pinterest Items -->
+            <div class="item-card" data-type="pin" data-status="saved" data-collaboration="solo" data-source="home-decor">
+                <div class="item-thumbnail">
+                    🏠
+                    <div class="platform-badge">Pinterest</div>
+                    <div class="type-badge">Pin</div>
+                </div>
+                <div class="item-content">
+                    <div class="item-title">Minimalist Living Room Ideas</div>
+                    <div class="item-notes">Beautiful clean aesthetic with neutral colors. Perfect inspiration for my apartment makeover.</div>
+                    <div class="item-tags">
+                        <span class="tag">home-decor</span>
+                        <span class="tag">minimalist</span>
+                        <span class="tag">living-room</span>
+                    </div>
+                    <div class="item-meta">
+                        <div class="source-info">
+                            <span>📌 Home Decor Board</span>
+                            <a href="#" class="source-link">View Original</a>
+                        </div>
+                        <div class="collaborators">
+                            <div class="collaboration-type">Solo</div>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="action-btn primary" onclick="updateStatus(this, 'progress')">Start</button>
+                        <button class="action-btn" onclick="recreateItem(this)">Recreate</button>
+                        <button class="action-btn" onclick="shareItem(this)">Share</button>
+                    </div>
+                    <div class="status-indicator-card">
+                        <div class="status-icon saved"></div>
+                        <span>Saved for later</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="item-card" data-type="image" data-status="progress" data-collaboration="shared" data-source="recipes">
+                <div class="item-thumbnail">
+                    🍰
+                    <div class="platform-badge">Pinterest</div>
+                    <div class="type-badge">Image</div>
+                </div>
+                <div class="item-content">
+                    <div class="item-title">No-Bake Chocolate Cheesecake</div>
+                    <div class="item-notes">Currently making this for weekend dinner party. Looks amazing and seems easy to follow.</div>
+                    <div class="item-tags">
+                        <span class="tag">recipe</span>
+                        <span class="tag">dessert</span>
+                        <span class="tag">no-bake</span>
+                        <span class="tag">chocolate</span>
+                    </div>
+                    <div class="item-meta">
+                        <div class="source-info">
+                            <span>📌 Recipes Board</span>
+                            <a href="#" class="source-link">View Original</a>
+                        </div>
+                        <div class="collaborators">
+                            <div class="collaborator-avatar">S</div>
+                            <div class="collaborator-avatar">T</div>
+                            <div class="collaboration-type shared">Shared</div>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="action-btn primary" onclick="updateStatus(this, 'done')">Complete</button>
+                        <button class="action-btn" onclick="recreateItem(this)">Continue</button>
+                        <button class="action-btn" onclick="shareItem(this)">Share</button>
+                    </div>
+                    <div class="status-indicator-card">
+                        <div class="status-icon progress"></div>
+                        <span>Baking in progress</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="item-card" data-type="video" data-status="done" data-collaboration="solo" data-source="diy">
+                <div class="item-thumbnail">
+                    🔨
+                    <div class="platform-badge">Pinterest</div>
+                    <div class="type-badge">Video</div>
+                </div>
+                <div class="item-content">
+                    <div class="item-title">DIY Floating Shelves Tutorial</div>
+                    <div class="item-notes">Successfully built these shelves for my home office! They look exactly like the tutorial.</div>
+                    <div class="item-tags">
+                        <span class="tag">diy</span>
+                        <span class="tag">woodworking</span>
+                        <span class="tag">shelves</span>
+                        <span class="tag">completed</span>
+                    </div>
+                    <div class="item-meta">
+                        <div class="source-info">
+                            <span>📌 DIY Projects Board</span>
+                            <a href="#" class="source-link">View Original</a>
+                        </div>
+                        <div class="collaborators">
+                            <div class="collaboration-type">Solo</div>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="action-btn" onclick="updateStatus(this, 'saved')">Reset</button>
+                        <button class="action-btn" onclick="recreateItem(this)">Make Again</button>
+                        <button class="action-btn primary" onclick="shareItem(this)">Share Success</button>
+                    </div>
+                    <div class="status-indicator-card">
+                        <div class="status-icon done"></div>
+                        <span>Successfully completed</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="item-card" data-type="idea" data-status="saved" data-collaboration="shared" data-source="fashion">
+                <div class="item-thumbnail">
+                    👗
+                    <div class="platform-badge">Pinterest</div>
+                    <div class="type-badge">Idea</div>
+                </div>
+                <div class="item-content">
+                    <div class="item-title">Fall Capsule Wardrobe Essentials</div>
+                    <div class="item-notes">Great guide for building a versatile fall wardrobe. Need to plan shopping list based on this.</div>
+                    <div class="item-tags">
+                        <span class="tag">fashion</span>
+                        <span class="tag">capsule-wardrobe</span>
+                        <span class="tag">fall</span>
+                        <span class="tag">essentials</span>
+                    </div>
+                    <div class="item-meta">
+                        <div class="source-info">
+                            <span>📌 Fashion Board</span>
+                            <a href="#" class="source-link">View Original</a>
+                        </div>
+                        <div class="collaborators">
+                            <div class="collaborator-avatar">U</div>
+                            <div class="collaboration-type shared">Shared</div>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="action-btn primary" onclick="updateStatus(this, 'progress')">Start</button>
+                        <button class="action-btn" onclick="recreateItem(this)">Recreate</button>
+                        <button class="action-btn" onclick="shareItem(this)">Share</button>
+                    </div>
+                    <div class="status-indicator-card">
+                        <div class="status-icon saved"></div>
+                        <span>Saved for later</span>
+                    </div>
+                </div>
+
+                <div class="item-card" data-type="pin" data-status="progress" data-collaboration="solo" data-source="recipes">
+                <div class="item-thumbnail">
+                    🥗
+                    <div class="platform-badge">Pinterest</div>
+                    <div class="type-badge">Pin</div>
+                </div>
+                <div class="item-content">
+                    <div class="item-title">Healthy Meal Prep Ideas</div>
+                    <div class="item-notes">Started meal prepping based on these ideas. So far loving the variety and convenience!</div>
+                    <div class="item-tags">
+                        <span class="tag">meal-prep</span>
+                        <span class="tag">healthy</span>
+                        <span class="tag">recipes</span>
+                    </div>
+                    <div class="item-meta">
+                        <div class="source-info">
+                            <span>📌 Recipes Board</span>
+                            <a href="#" class="source-link">View Original</a>
+                        </div>
+                        <div class="collaborators">
+                            <div class="collaboration-type">Solo</div>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="action-btn primary" onclick="updateStatus(this, 'done')">Complete</button>
+                        <button class="action-btn" onclick="recreateItem(this)">Continue</button>
+                        <button class="action-btn" onclick="shareItem(this)">Share</button>
+                    </div>
+                    <div class="status-indicator-card">
+                        <div class="status-icon progress"></div>
+                        <span>Meal prepping in progress</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="item-card" data-type="video" data-status="saved" data-collaboration="shared" data-source="diy">
+                <div class="item-thumbnail">
+                    🎨
+                    <div class="platform-badge">Pinterest</div>
+                    <div class="type-badge">Video</div>
+                </div>
+                <div class="item-content">
+                    <div class="item-title">Upcycled Furniture Makeover</div>
+                    <div class="item-notes">Amazing transformation of old dresser. Want to try this technique on my bedroom furniture.</div>
+                    <div class="item-tags">
+                        <span class="tag">upcycling</span>
+                        <span class="tag">furniture</span>
+                        <span class="tag">makeover</span>
+                        <span class="tag">diy</span>
+                    </div>
+                    <div class="item-meta">
+                        <div class="source-info">
+                            <span>📌 DIY Projects Board</span>
+                            <a href="#" class="source-link">View Original</a>
+                        </div>
+                        <div class="collaborators">
+                            <div class="collaborator-avatar">V</div>
+                            <div class="collaborator-avatar">W</div>
+                            <div class="collaboration-type shared">Shared</div>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="action-btn primary" onclick="updateStatus(this, 'progress')">Start</button>
+                        <button class="action-btn" onclick="recreateItem(this)">Recreate</button>
+                        <button class="action-btn" onclick="shareItem(this)">Share</button>
+                    </div>
+                    <div class="status-indicator-card">
+                        <div class="status-icon saved"></div>
+                        <span>Saved for later</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function connectPinterest() {
+            const btn = event.target;
+            const status = document.getElementById('connectionStatus');
+            
+            btn.textContent = 'Connecting...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                status.innerHTML = '<div class="status-dot connected"></div><span>Connected</span>';
+                status.className = 'status-indicator connected';
+                btn.textContent = 'Connected ✓';
+                btn.style.background = '#28a745';
+            }, 2000);
+        }
+
+        function filterByType(type) {
+            updateFilterButtons(event.target);
+            filterItems('type', type);
+        }
+
+        function filterByStatus(status) {
+            updateFilterButtons(event.target);
+            filterItems('status', status);
+        }
+
+        function filterByCollaboration(collaboration) {
+            updateFilterButtons(event.target);
+            filterItems('collaboration', collaboration);
+        }
+
+        function filterBySource(source) {
+            updateFilterButtons(event.target);
+            filterItems('source', source);
+        }
+
+        function updateFilterButtons(activeButton) {
+            activeButton.parentElement.querySelectorAll('.filter-option').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            activeButton.classList.add('active');
+        }
+
+        function filterItems(filterType, value) {
+            const items = document.querySelectorAll('.item-card');
+            items.forEach(item => {
+                if (value === 'all') {
+                    item.style.display = 'block';
+                } else {
+                    const itemValue = item.dataset[filterType];
+                    item.style.display = itemValue === value ? 'block' : 'none';
+                }
+            });
+        }
+
+        function searchItems(query) {
+            const items = document.querySelectorAll('.item-card');
+            const searchTerm = query.toLowerCase();
+            
+            items.forEach(item => {
+                const title = item.querySelector('.item-title').textContent.toLowerCase();
+                const notes = item.querySelector('.item-notes').textContent.toLowerCase();
+                const tags = Array.from(item.querySelectorAll('.tag')).map(tag => tag.textContent.toLowerCase()).join(' ');
+                
+                const matches = title.includes(searchTerm) || notes.includes(searchTerm) || tags.includes(searchTerm);
+                item.style.display = matches ? 'block' : 'none';
+            });
+        }
+
+        function updateStatus(button, newStatus) {
+            const card = button.closest('.item-card');
+            const statusIndicator = card.querySelector('.status-indicator-card');
+            const statusIcon = statusIndicator.querySelector('.status-icon');
+            const statusText = statusIndicator.querySelector('span');
+            
+            card.dataset.status = newStatus;
+            statusIcon.className = `status-icon ${newStatus}`;
+            
+            const statusTexts = {
+                saved: 'Saved for later',
+                progress: 'In progress',
+                done: 'Successfully completed'
+            };
+            
+            statusText.textContent = statusTexts[newStatus];
+            updateActionButtons(card.querySelector('.item-actions'), newStatus);
+        }
+
+        function updateActionButtons(actionsContainer, status) {
+            const buttons = actionsContainer.querySelectorAll('.action-btn');
+            buttons.forEach(btn => btn.classList.remove('primary'));
+            
+            if (status === 'saved') {
+                buttons[0].textContent = 'Start';
+                buttons[0].classList.add('primary');
+            } else if (status === 'progress') {
+                buttons[0].textContent = 'Complete';
+                buttons[0].classList.add('primary');
+            } else if (status === 'done') {
+                buttons[2].classList.add('primary');
+            }
+        }
+
+        function recreateItem(button) {
+            const card = button.closest('.item-card');
+            const title = card.querySelector('.item-title').textContent;
+            alert(`Starting recreation workflow for: ${title}`);
+        }
+
+        function shareItem(button) {
+            const card = button.closest('.item-card');
+            const title = card.querySelector('.item-title').textContent;
+            alert(`Sharing "${title}" to collaboration workspace`);
+        }
+
+        // Add smooth animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.item-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+
+<script src="js/api.js"></script>
+<script src="js/navigation.js"></script>
+<script src="js/utils.js"></script>
+</body>
+</html>
